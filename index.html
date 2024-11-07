@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monk Mode</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Monk Mode</h1>
+    <p class="counter">Rounds Completed: <span id="roundCounter">0</span>/60</p>
+    <ul class="target-list">
+      <li class="target-item">
+        <input type="checkbox" id="target1">
+        <input type="text" id="targetText1" maxlength="30" placeholder="Target 1">
+      </li>
+      <li class="target-item">
+        <input type="checkbox" id="target2">
+        <input type="text" id="targetText2" maxlength="30" placeholder="Target 2">
+      </li>
+      <li class="target-item">
+        <input type="checkbox" id="target3">
+        <input type="text" id="targetText3" maxlength="30" placeholder="Target 3">
+      </li>
+      <li class="target-item">
+        <input type="checkbox" id="target4">
+        <input type="text" id="targetText4" maxlength="30" placeholder="Target 4">
+      </li>
+      <li class="target-item">
+        <input type="checkbox" id="target5">
+        <input type="text" id="targetText5" maxlength="30" placeholder="Target 5">
+      </li>
+      <li class="target-item">
+        <input type="checkbox" id="target6">
+        <input type="text" id="targetText6" maxlength="30" placeholder="Target 6">
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const targets = document.querySelectorAll(".target-item input[type='checkbox']");
+      const targetTexts = document.querySelectorAll(".target-item input[type='text']");
+      const roundCounterDisplay = document.getElementById("roundCounter");
+      let roundCount = parseInt(localStorage.getItem("roundCount")) || 0;
+      roundCounterDisplay.textContent = roundCount;
+
+      // Load saved targets and texts from localStorage
+      targets.forEach((checkbox, index) => {
+        const savedValue = localStorage.getItem(target${index + 1});
+        if (savedValue === "checked") {
+          checkbox.checked = true;
+        }
+      });
+
+      targetTexts.forEach((input, index) => {
+        const savedText = localStorage.getItem(targetText${index + 1});
+        if (savedText) {
+          input.value = savedText;
+        }
+      });
+
+      // Function to check if all checkboxes are ticked
+      function checkAllTargetsCompleted() {
+        return Array.from(targets).every(checkbox => checkbox.checked);
+      }
+
+      // Update counter and reset checkboxes and texts when all targets are checked
+      function updateCounter() {
+        if (checkAllTargetsCompleted() && roundCount < 60) {
+          roundCount++;
+          roundCounterDisplay.textContent = roundCount;
+          localStorage.setItem("roundCount", roundCount);
+          resetTargets();
+        }
+      }
+
+      // Reset all checkboxes but keep target texts
+      function resetTargets() {
+        targets.forEach(checkbox => {
+          checkbox.checked = false;
+          localStorage.setItem(checkbox.id, "unchecked");
+        });
+      }
+
+      // Save each checkbox state and update counter if all are ticked
+      targets.forEach((checkbox, index) => {
+        checkbox.addEventListener("change", () => {
+          const status = checkbox.checked ? "checked" : "unchecked";
+          localStorage.setItem(target${index + 1}, status);
+          updateCounter();
+        });
+      });
+
+      // Save each target text input to localStorage on input change
+      targetTexts.forEach((input, index) => {
+        input.addEventListener("input", () => {
+          localStorage.setItem(targetText${index + 1}, input.value);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
